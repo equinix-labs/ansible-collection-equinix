@@ -57,10 +57,13 @@ integration-test: create-integration-config
 	ansible-test integration $(TEST_ARGS)
 
 create-integration-config:
-ifneq ("${METAL_API_TOKEN}", "")
-	@echo "metal_api_token: ${METAL_API_TOKEN}" > $(INTEGRATION_CONFIG);
+ifneq ("${METAL_AUTH_TOKEN}", "")
+	@echo "metal_api_token: ${METAL_AUTH_TOKEN}" > $(INTEGRATION_CONFIG);
+else ifneq ("${METAL_API_TOKEN}", "")
+	@echo "You have to export your token in METAL_AUTH_TOKEN. You seem to have deprecated METAL_API_TOKEN envvar set.";
+	exit 1;
 else
-	echo "METAL_API_TOKEN must be set"; \
+	echo "You have to export your token in METAL_AUTH_TOKEN must be set"; \
 	exit 1;
 endif
 	echo "metal_ua_prefix: E2E" >> $(INTEGRATION_CONFIG)
